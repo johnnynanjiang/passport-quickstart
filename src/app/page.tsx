@@ -1,9 +1,9 @@
 "use client";
+
 import { useState } from "react";
-import { createPassportClient } from "@0xpass/passport-viem";
-import { http } from "viem";
-import { mainnet } from "viem/chains";
 import { usePassport } from "./hooks/usePassport";
+
+import theWalletAuthenticaionService from "./services/AuthenticationService";
 
 export default function Page() {
   const [username, setUsername] = useState("");
@@ -17,15 +17,16 @@ export default function Page() {
   const [authenticatedHeader, setAuthenticatedHeader] = useState({});
   const [address, setAddress] = useState<string>();
 
-  const alchemyUrl = process.env.NEXT_PUBLIC_ALCHEMY_URL!;
-  const fallbackProvider = http(alchemyUrl);
-
   const userInput = {
     username: username,
     userDisplayName: username,
   };
 
-  const { passport } = usePassport("07907e39-63c6-4b0b-bca8-377d26445172");
+  const { passport } = usePassport(
+    // "07907e39-63c6-4b0b-bca8-377d26445172" // original
+    // "43ca2cb8-886e-417f-9e31-0c0c5b3acd1e" // localhost:4943
+    "4b8e66a2-bf1f-4d9d-8df8-7f7aa7502370" // localhost:3000
+  );
 
   async function register() {
     setRegistering(true);
@@ -66,23 +67,11 @@ export default function Page() {
     }
   }
 
-  async function createWalletClient() {
-    return await createPassportClient(
-      authenticatedHeader,
-      fallbackProvider,
-      mainnet
-    );
-  }
-
   async function signMessage(message: string) {
     try {
       setSignMessageLoading(true);
-      const client = await createWalletClient();
-      const [address] = await client.getAddresses();
-      const response = await client.signMessage({
-        account: address,
-        message,
-      });
+
+      const response = await theWalletAuthenticaionService.sign(authenticatedHeader, message);
 
       setMessageSignature(response);
       setSignMessageLoading(false);
