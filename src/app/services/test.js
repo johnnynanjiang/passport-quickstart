@@ -1,7 +1,10 @@
 const { Web3 } = require("web3");
 const { encode } = require("rlp");
 
+const { theWalletTransactionService } = require("./TransactionService");
+
 async function main() {
+  /*
   const web3 = new Web3("http://127.0.0.1:8545/");
 
   const privateKey = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
@@ -34,10 +37,12 @@ async function main() {
   );
   console.log("receipt", receipt);
 
-  // Passport
   const rawTransaction = encode([transaction.nonce, transaction.gasPrice, transaction.gasLimit, transaction.to, transaction.value, transaction.data]);
   console.log("rawTransaction", new Uint8Array(rawTransaction));
+  */
 
+  const txAsUint8Array = await theWalletTransactionService.constructTransaction();
+  const txAsJson = theWalletTransactionService.uint8ArrayToJson(txAsUint8Array);
 }
 
 main();
