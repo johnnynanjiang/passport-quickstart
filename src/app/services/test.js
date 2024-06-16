@@ -41,8 +41,9 @@ async function main() {
   console.log("rawTransaction", new Uint8Array(rawTransaction));
   */
 
-  const txAsUint8Array = await theWalletTransactionService.constructTransaction();
-  const txAsJson = theWalletTransactionService.uint8ArrayToJson(txAsUint8Array);
+  const txSerialized = await theWalletTransactionService.constructTransactionSerialized();
+  const signedTx = await theWalletTransactionService.signTransactionSerialized(txSerialized);
+  const receipt = await theWalletTransactionService.broadcastTransaction(signedTx);
 }
 
 main();
