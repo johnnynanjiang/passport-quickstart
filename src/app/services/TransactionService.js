@@ -1,5 +1,4 @@
 const { Web3 } = require("web3");
-const { encode } = require("rlp");
 const { LegacyTransaction } = require('@ethereumjs/tx');
 
 class TransactionService {
@@ -42,9 +41,12 @@ class TransactionService {
     const tx = await this.constructTransaction();
 
     const txSerialized = tx.serialize();
-    console.log("txSerialized", txSerialized.toString('hex'));
-    
-    return txSerialized;
+    console.log("txSerialized", txSerialized);
+
+    const txSerializedAsHexString = '0x' + Buffer.from(txSerialized).toString('hex');
+    console.log("txSerialized as Hex String", txSerializedAsHexString);
+   
+    return txSerializedAsHexString;
   }
 
   async signTransactionSerialized(txSerialized) {
@@ -69,7 +71,7 @@ class TransactionService {
 
   async broadcastTransaction(signedTransaction) {
     const receipt = await this.web3.eth.sendSignedTransaction(
-      signedTransaction.rawTransaction
+      signedTransaction.rawTransaction // the rawTransaction has the signatures already
     );
     console.log("receipt", receipt);
 
