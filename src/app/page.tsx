@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePassport } from "./hooks/usePassport";
 
 import theWalletAuthenticaionService from "./services/AuthenticationService";
+import theWalletTransactionService from "./services/TransactionService";
 
 export default function Page() {
   const [username, setUsername] = useState("");
@@ -80,6 +81,14 @@ export default function Page() {
     }
   }
 
+  async function signTransaction() {
+    try {
+      const response = await theWalletTransactionService.passportSignTransaction(authenticatedHeader);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-white text-black">
       <div
@@ -126,6 +135,12 @@ export default function Page() {
                 className="border border-1 rounded p-2 border-black mb-4 ml-2"
               >
                 {signMessageLoading ? "Signing..." : "Sign Message"}
+              </button>
+              <button
+                onClick={async () => await signTransaction()}
+                className="border border-1 rounded p-2 border-black mb-4 ml-2"
+              >
+                Sign Transaction
               </button>
             </>
           ) : (

@@ -1,5 +1,10 @@
-const { Web3 } = require("web3");
-const { LegacyTransaction } = require('@ethereumjs/tx');
+import { Web3 } from "web3";
+import { LegacyTransaction } from '@ethereumjs/tx';
+
+import { http } from "viem";
+import { mainnet, hardhat } from "viem/chains";
+import { createPassportClient } from "@0xpass/passport-viem";
+import { Passport } from "@0xpass/passport";
 
 class TransactionService {
   constructor() {
@@ -77,11 +82,37 @@ class TransactionService {
 
     return receipt;
   }
+
+  async passportSignTransaction(authenticatedHeader) {
+    const chain = hardhat;
+    const transport = http("http://127.0.0.1:8545/");
+
+    const client = await createPassportClient(
+      authenticatedHeader,
+      transport,
+      chain
+    );
+
+    const [account] = await client.getAddresses();
+    const transaction = await client.prepareTransactionRequest({
+      account: account,
+      to: "0x012d55941bb13934207dc6c02183fa72a10ef9c0",
+      value: BigInt(10),
+      chain: chain,
+    });
+
+    client
+      .signTransaction(transaction)
+      .then((res) => {
+        console.log("res", res)
+      })
+      .catch((err) => {
+        console.log("err", err)
+      });
+  }
 }
 
 const theWalletTransactionService = new TransactionService();
 Object.freeze(theWalletTransactionService);
 
-// export default theWalletTransactionService;
-
-module.exports = { theWalletTransactionService };
+export default theWalletTransactionService;
