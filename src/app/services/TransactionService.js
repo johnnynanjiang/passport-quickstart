@@ -2,7 +2,7 @@ import { Web3 } from "web3";
 import { LegacyTransaction } from '@ethereumjs/tx';
 
 import { http } from "viem";
-import { mainnet, hardhat, localhost } from "viem/chains";
+import { mainnet, hardhat, localhost, kavaTestnet } from "viem/chains";
 import { createPassportClient } from "@0xpass/passport-viem";
 import { Passport } from "@0xpass/passport";
 
@@ -84,7 +84,7 @@ class TransactionService {
   }
 
   async passportSignTransaction(authenticatedHeader) {
-    const chain = localhost;
+    const chain = hardhat; // mainnet, localhost, kavaTestnet didn't work, got mismatch error
     const transport = http("http://127.0.0.1:8545/");
 
     const client = await createPassportClient(
